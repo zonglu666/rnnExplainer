@@ -1,11 +1,11 @@
 import { matrixSlice } from '../utils/cnn.js';
 
 export function array1d(length, f) {
-  return Array.from({length: length}, f ? ((v, i) => f(i)) : undefined);
+  return Array.from({ length: length }, f ? ((v, i) => f(i)) : undefined);
 }
 
 function array2d(height, width, f) {
-  return Array.from({length: height}, (v, i) => Array.from({length: width}, f ? ((w, j) => f(i, j)) : undefined));
+  return Array.from({ length: height }, (v, i) => Array.from({ length: width }, f ? ((w, j) => f(i, j)) : undefined));
 }
 
 export function generateOutputMappings(stride, output, kernelLength, padded_input_size, dilation) {
@@ -24,9 +24,9 @@ export function generateOutputMappings(stride, output, kernelLength, padded_inpu
   return outputMapping;
 }
 
-export function compute_input_multiplies_with_weight(hoverH, hoverW, 
-                                              padded_input_size, weight_dims, outputMappings, kernelLength) {
-  
+export function compute_input_multiplies_with_weight(hoverH, hoverW,
+  padded_input_size, weight_dims, outputMappings, kernelLength) {
+
   const [h_weight, w_weight] = weight_dims;
   const input_multiplies_with_weight = array1d(padded_input_size * padded_input_size);
   for (let h_weight = 0; h_weight < kernelLength; h_weight++) {
@@ -41,7 +41,7 @@ export function compute_input_multiplies_with_weight(hoverH, hoverW,
 
 export function getMatrixSliceFromInputHighlights(matrix, highlights, kernelLength) {
   var indices = highlights.reduce((total, value, index) => {
-  if (value != undefined) total.push(index);
+    if (value != undefined) total.push(index);
     return total;
   }, []);
   return matrixSlice(matrix, Math.floor(indices[0] / matrix.length), Math.floor(indices[0] / matrix.length) + kernelLength, indices[0] % matrix.length, indices[0] % matrix.length + kernelLength);
@@ -49,16 +49,16 @@ export function getMatrixSliceFromInputHighlights(matrix, highlights, kernelLeng
 
 export function getMatrixSliceFromOutputHighlights(matrix, highlights) {
   var indices = highlights.reduce((total, value, index) => {
-  if (value != false) total.push(index);
+    if (value != false) total.push(index);
     return total;
   }, []);
   return matrixSlice(matrix, Math.floor(indices[0] / matrix.length), Math.floor(indices[0] / matrix.length) + 1, indices[0] % matrix.length, indices[0] % matrix.length + 1);
 }
 
 // editted for 1d matrix
-export function getRNNMatrixSliceFromHighlights(matrix, highlights, stride=1) {
+export function getRNNMatrixSliceFromHighlights(matrix, highlights, stride = 1) {
   var indices = highlights.reduce((total, value, index) => {
-  if (value != false) total.push(index);
+    if (value != false) total.push(index);
     return total;
   }, []);
   let matLen = matrix.length;
@@ -74,9 +74,9 @@ export function getVisualizationSizeConstraint(imageLength) {
 }
 
 export function getDataRange(image) {
-  let maxRow = image.map(function(row){ return Math.max.apply(Math, row); });
+  let maxRow = image.map(function (row) { return Math.max.apply(Math, row); });
   let max = Math.max.apply(null, maxRow);
-  let minRow = image.map(function(row){ return Math.min.apply(Math, row); });
+  let minRow = image.map(function (row) { return Math.min.apply(Math, row); });
   let min = Math.min.apply(null, minRow);
   let range = {
     range: 2 * Math.max(Math.abs(min), Math.abs(max)),
@@ -86,7 +86,7 @@ export function getDataRange(image) {
   return range;
 }
 
-export function gridData(image, constraint=getVisualizationSizeConstraint(image.length)) {
+export function gridData(image, constraint = getVisualizationSizeConstraint(image.length)) {
   // Constrain grids based on input image size.
   var data = new Array();
   var xpos = 1;
@@ -94,7 +94,7 @@ export function gridData(image, constraint=getVisualizationSizeConstraint(image.
   var width = constraint;
   var height = constraint;
   for (var row = 0; row < image.length; row++) {
-    data.push( new Array() );
+    data.push(new Array());
     for (var column = 0; column < image[0].length; column++) {
       data[row].push({
         text: Math.round(image[row][column] * 100) / 100,
@@ -108,7 +108,7 @@ export function gridData(image, constraint=getVisualizationSizeConstraint(image.
       xpos += width;
     }
     xpos = 1;
-    ypos += height; 
+    ypos += height;
   }
   return data;
 }

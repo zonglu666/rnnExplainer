@@ -8,12 +8,12 @@ const nodeLength = overviewConfig.nodeLength;
  * Compute the [minimum, maximum] of a 1D or 2D array.
  * @param {[number]} array 
  */
-export  const getExtent = (array) => {
+export const getExtent = (array) => {
   let min = Infinity;
   let max = -Infinity;
 
   // Scalar
-  if (array.length === undefined || array.length === 1 ) {
+  if (array.length === undefined || array.length === 1) {
     return [array, array];
   }
 
@@ -85,10 +85,10 @@ export const getOutputKnotRNN = (point) => {
  * Return the output knot (left boundary center)
  * @param {object} point {x: x, y:y}
  */
-export const getInputKnotRNN = (point,deltaY) => {
+export const getInputKnotRNN = (point, deltaY) => {
   return {
     x: point.x,
-    y: point.y + deltaY 
+    y: point.y + deltaY
   }
 }
 
@@ -105,24 +105,24 @@ export const getLinkDataRNN = (nodeCoordinate, rnn) => {
       let isOutput = rnn[l][n].layerName === 'output';
       // for calibration of the position of y in dense layer, 
       // the height of the dense rect is nodeLength/4, so clibraton value should 5/8 of nodeLength
-      let deltaY = l !== rnn.length -1? nodeHeight/2 : nodeLength*5/8;
-      let curTarget = getInputKnotRNN(nodeCoordinate[l][n],deltaY);
+      let deltaY = l !== rnn.length - 1 ? nodeHeight / 2 : nodeLength * 5 / 8;
+      let curTarget = getInputKnotRNN(nodeCoordinate[l][n], deltaY);
       for (let p = 0; p < rnn[l][n].inputLinks.length; p++) {
         // Specially handle output layer (since we are ignoring the flatten)
         let inputNodeIndex = rnn[l][n].inputLinks[p].source.index;
-        
+
         if (isOutput) {
-          let flattenDimension = rnn[l-1][0].output.length *
-            rnn[l-1][0].output.length;
-          if (inputNodeIndex % flattenDimension !== 0){
-              continue;
+          let flattenDimension = rnn[l - 1][0].output.length *
+            rnn[l - 1][0].output.length;
+          if (inputNodeIndex % flattenDimension !== 0) {
+            continue;
           }
           inputNodeIndex = Math.floor(inputNodeIndex / flattenDimension);
         }
         // check if the source node in input layer exists, skip it if not
         let curSource;
-        if (rnn[l-1][inputNodeIndex]){
-          curSource = getOutputKnotRNN(nodeCoordinate[l-1][inputNodeIndex]);
+        if (rnn[l - 1][inputNodeIndex]) {
+          curSource = getOutputKnotRNN(nodeCoordinate[l - 1][inputNodeIndex]);
         } else {
 
           continue
@@ -179,16 +179,16 @@ export const getLinkData = (nodeCoordinate, cnn) => {
       for (let p = 0; p < cnn[l][n].inputLinks.length; p++) {
         // Specially handle output layer (since we are ignoring the flatten)
         let inputNodeIndex = cnn[l][n].inputLinks[p].source.index;
-        
+
         if (isOutput) {
-          let flattenDimension = cnn[l-1][0].output.length *
-            cnn[l-1][0].output.length;
-          if (inputNodeIndex % flattenDimension !== 0){
-              continue;
+          let flattenDimension = cnn[l - 1][0].output.length *
+            cnn[l - 1][0].output.length;
+          if (inputNodeIndex % flattenDimension !== 0) {
+            continue;
           }
           inputNodeIndex = Math.floor(inputNodeIndex / flattenDimension);
         }
-        let curSource = getOutputKnot(nodeCoordinate[l-1][inputNodeIndex]);
+        let curSource = getOutputKnot(nodeCoordinate[l - 1][inputNodeIndex]);
         let curWeight = cnn[l][n].inputLinks[p].weight;
         linkData.push({
           source: curSource,

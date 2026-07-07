@@ -1,6 +1,6 @@
 /* global tf */
 
-import {Node, Link} from './class';
+import { Node, Link } from './class';
 
 // Network input image size
 const networkInputSize = 64;
@@ -37,7 +37,7 @@ const constructCNNFromOutputs = (allOutputs, model, inputImageTensor) => {
     let node = new Node('input', i, nodeType.INPUT, 0, inputImageArray[i]);
     inputLayer.push(node);
   }
-                                                                                                                   
+
   cnn.push(inputLayer);
   let curLayerIndex = 1;
 
@@ -159,17 +159,17 @@ const constructCNNFromOutputs = (allOutputs, model, inputImageTensor) => {
             // row -> column -> channel
             curNodeRealIndex = preNodeIndex * (preNodeWidth * preNodeWidth) +
               preNodeRow * preNodeWidth + preNodeCol;
-          
+
           let node = new Node(layer.name, i, curLayerType,
-              bias, outputs[i]);
-          
+            bias, outputs[i]);
+
           // TF uses the (i) index for computation, but the real order should
           // be (curNodeRealIndex). We will sort the nodes using the real order
           // after we compute the logits in the output layer.
           node.realIndex = curNodeRealIndex;
 
           let link = new Link(cnn[curLayerIndex - 1][preNodeIndex],
-              node, [preNodeRow, preNodeCol]);
+            node, [preNodeRow, preNodeCol]);
 
           cnn[curLayerIndex - 1][preNodeIndex].outputLinks.push(link);
           node.inputLinks.push(link);
@@ -204,7 +204,7 @@ export const constructCNN = async (inputImageFile, model) => {
   // Load the image file
   let inputImageTensor = await getInputImageArray(inputImageFile, true);
   console.log('input image tensor is: ', inputImageTensor);
-  
+
   // Need to feed the model with a batch
   let inputImageTensorBatch = tf.stack([inputImageTensor]);
   // console.log(inputImageTensorBatch);
@@ -212,7 +212,7 @@ export const constructCNN = async (inputImageFile, model) => {
   // the model, and sequencially apply transformations.
   let preTensor = inputImageTensorBatch;
   let outputs = [];
-  
+
   // Iterate through all layers, and build one model with that layer as output
   for (let l = 0; l < model.layers.length; l++) {
     let curTensor = model.layers[l].apply(preTensor);
@@ -233,7 +233,7 @@ export const constructCNN = async (inputImageFile, model) => {
     // Update preTensor for next nesting iteration
     preTensor = curTensor;
   }
-  console.log('final cnn outputs is ' )
+  console.log('final cnn outputs is ')
   console.log(outputs);
   console.log('cnn result is ' + outputs[11])
 
@@ -280,7 +280,7 @@ const cropCentralSquare = (arr) => {
  * @param {int} width Canvas image width
  * @param {int} height Canvas image height
  */
-const imageDataTo3DTensor = (imageData, width, height, normalize=true) => {
+const imageDataTo3DTensor = (imageData, width, height, normalize = true) => {
   // Create array placeholder for the 3d array
   let imageArray = tf.fill([width, height, 3], 0).arraySync();
 
@@ -289,12 +289,12 @@ const imageDataTo3DTensor = (imageData, width, height, normalize=true) => {
     let pixelIndex = Math.floor(i / 4),
       channelIndex = i % 4,
       row = width === height ? Math.floor(pixelIndex / width)
-                              : pixelIndex % width,
+        : pixelIndex % width,
       column = width === height ? pixelIndex % width
-                              : Math.floor(pixelIndex / width);
-    
+        : Math.floor(pixelIndex / width);
+
     if (channelIndex < 3) {
-      let curEntry  = imageData[i];
+      let curEntry = imageData[i];
       // Normalize the original pixel value from [0, 255] to [0, 1]
       if (normalize) {
         curEntry /= 255;
@@ -318,7 +318,7 @@ const imageDataTo3DTensor = (imageData, width, height, normalize=true) => {
  * @param {string} imgFile File path to the image file
  * @returns A promise with the corresponding 3D array
  */
-const getInputImageArray = (imgFile, normalize=true) => {
+const getInputImageArray = (imgFile, normalize = true) => {
   let canvas = document.createElement('canvas');
   canvas.style.cssText = 'display:none;';
   document.getElementsByTagName('body')[0].appendChild(canvas);
@@ -338,7 +338,7 @@ const getInputImageArray = (imgFile, normalize=true) => {
       if (inputImage.width > networkInputSize || inputImage.height > networkInputSize) {
         // Step 1 - Resize using smaller dimension to scale the image down. 
         let resizeCanvas = document.createElement('canvas'),
-            resizeContext = resizeCanvas.getContext('2d');
+          resizeContext = resizeCanvas.getContext('2d');
         let smallerDimension = Math.min(inputImage.width, inputImage.height);
         const resizeFactor = (networkInputSize + 1) / smallerDimension;
         resizeCanvas.width = inputImage.width * resizeFactor;

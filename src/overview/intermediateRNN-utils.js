@@ -12,11 +12,11 @@ const svgPaddings = rnnOverviewConfig.svgPaddings;
 
 // Shared variables
 let svg_rnn = undefined;
-let labelY = svgPaddings.top / 2 - 4 ;
-svgStore_rnn.subscribe( value => {svg_rnn = value;} )
+let labelY = svgPaddings.top / 2 - 4;
+svgStore_rnn.subscribe(value => { svg_rnn = value; })
 
 let vSpaceAroundGap = undefined;
-vSpaceAroundGapStore_rnn.subscribe( value => {vSpaceAroundGap = value;} )
+vSpaceAroundGapStore_rnn.subscribe(value => { vSpaceAroundGap = value; })
 
 /**
  * Move one layer horizontally
@@ -54,7 +54,7 @@ export const moveLayerX = (arg) => {
       .delay(delay)
       .duration(duration)
       .attr('x', targetX);
-    
+
     d3.select(g[i])
       .select('rect.bounding')
       .transition(transitionName)
@@ -62,22 +62,22 @@ export const moveLayerX = (arg) => {
       .delay(delay)
       .duration(duration)
       .attr('x', targetX);
-    
+
     if (opacity !== undefined && i !== specialIndex) {
       d3.select(g[i])
         .select('image')
         .style('opacity', opacity);
     }
   });
-  
+
   // Also move the layer labels
   svg_rnn.selectAll(`g#layer-label-${layerIndex}`)
     .transition(transitionName)
     .ease(d3.easeCubicInOut)
     .delay(delay)
     .duration(duration)
-    .attr('transform', (d,i) => {
-      let x = d.type !=='embedding' ? targetX + nodeLength / 2 :targetX + embeddingLen /2;
+    .attr('transform', (d, i) => {
+      let x = d.type !== 'embedding' ? targetX + nodeLength / 2 : targetX + embeddingLen / 2;
       // let y = (svgPaddings.top + vSpaceAroundGap) / 2 + 5;
       let y = labelY;
       return `translate(${x}, ${y})`;
@@ -89,8 +89,8 @@ export const moveLayerX = (arg) => {
     .ease(d3.easeCubicInOut)
     .delay(delay)
     .duration(duration)
-    .attr('transform', (d,i) => {
-      let x = d.type !=='embedding' ? targetX + nodeLength / 2 :targetX + embeddingLen/2;
+    .attr('transform', (d, i) => {
+      let x = d.type !== 'embedding' ? targetX + nodeLength / 2 : targetX + embeddingLen / 2;
       // let y = (svgPaddings.top + vSpaceAroundGap) / 2 - 6;
       let y = labelY;
       return `translate(${x}, ${y})`;
@@ -119,7 +119,7 @@ export const addOverlayGradient = (gradientID, stops, group) => {
     .attr("x2", "100%")
     .attr("y1", "100%")
     .attr("y2", "100%");
-  
+
   stops.forEach(s => {
     gradient.append('stop')
       .attr('offset', s.offset)
@@ -160,10 +160,10 @@ export const drawIntermediateLayerLegend = (arg) => {
     colorScale = arg.colorScale,
     gradientAppendingName = arg.gradientAppendingName,
     gradientGap = arg.gradientGap;
-  
+
   if (colorScale === undefined) { colorScale = layerColorScales.conv; }
   if (gradientGap === undefined) { gradientGap = 0; }
-  
+
   // Add a legend color gradient
   let gradientName = 'url(#inputGradient)';
   let normalizedColor = v => colorScale(v * (1 - 2 * gradientGap) + gradientGap);
@@ -174,21 +174,27 @@ export const drawIntermediateLayerLegend = (arg) => {
       rightValue = (minMax.max + range / 2) / range,
       totalRange = minMax.max - minMax.min,
       zeroLocation = (0 - minMax.min) / totalRange,
-      leftMidValue = leftValue + (zeroValue - leftValue)/2,
-      rightMidValue = zeroValue + (rightValue - zeroValue)/2;
+      leftMidValue = leftValue + (zeroValue - leftValue) / 2,
+      rightMidValue = zeroValue + (rightValue - zeroValue) / 2;
 
     let stops = [
-      {offset: 0, color: normalizedColor(leftValue), opacity: 1},
-      {offset: zeroLocation / 2,
+      { offset: 0, color: normalizedColor(leftValue), opacity: 1 },
+      {
+        offset: zeroLocation / 2,
         color: normalizedColor(leftMidValue),
-        opacity: 1},
-      {offset: zeroLocation,
+        opacity: 1
+      },
+      {
+        offset: zeroLocation,
         color: normalizedColor(zeroValue),
-        opacity: 1},
-      {offset: zeroLocation + (1 - zeroValue) / 2,
+        opacity: 1
+      },
+      {
+        offset: zeroLocation + (1 - zeroValue) / 2,
         color: normalizedColor(rightMidValue),
-        opacity: 1},
-      {offset: 1, color: normalizedColor(rightValue), opacity: 1}
+        opacity: 1
+      },
+      { offset: 1, color: normalizedColor(rightValue), opacity: 1 }
     ];
 
     if (gradientAppendingName === undefined) {
@@ -208,19 +214,19 @@ export const drawIntermediateLayerLegend = (arg) => {
     .scale(legendScale)
     .tickFormat(d3.format(isInput ? 'd' : '.2f'))
     .tickValues(isInput ? [0, range] : [minMax.min, 0, minMax.max]);
-  
+
   let intermediateLegend = group.append('g')
     .attr('class', `intermediate-legend-${curLayerIndex - 1}`)
     .attr('transform', `translate(${x}, ${y})`);
-  
+
   let legendGroup = intermediateLegend.append('g')
     .attr('transform', `translate(0, ${legendHeight - 3})`)
     .call(legendAxis);
-  
+
   legendGroup.selectAll('text')
     .style('font-size', '9px')
     .style('fill', intermediateColor);
-  
+
   legendGroup.selectAll('path, line')
     .style('stroke', intermediateColor);
 
@@ -259,7 +265,7 @@ export const drawArrow = (arg) => {
   translateX = (1 - scaleX) * tx,
   translateY = (1 - scaleY) * ty;
   */
-  
+
   let arrow = group.append('g')
     .attr('class', 'arrow-group');
 

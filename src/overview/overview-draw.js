@@ -24,31 +24,31 @@ const formater = d3.format('.4f');
 
 // Shared variables
 let svg = undefined;
-svgStore.subscribe( value => {svg = value;} )
+svgStore.subscribe(value => { svg = value; })
 
 let vSpaceAroundGap = undefined;
-vSpaceAroundGapStore.subscribe( value => {vSpaceAroundGap = value;} )
+vSpaceAroundGapStore.subscribe(value => { vSpaceAroundGap = value; })
 
 let hSpaceAroundGap = undefined;
-hSpaceAroundGapStore.subscribe( value => {hSpaceAroundGap = value;} )
+hSpaceAroundGapStore.subscribe(value => { hSpaceAroundGap = value; })
 
 let cnn = undefined;
-cnnStore.subscribe( value => {cnn = value;} )
+cnnStore.subscribe(value => { cnn = value; })
 
 let nodeCoordinate = undefined;
-nodeCoordinateStore.subscribe( value => {nodeCoordinate = value;} )
+nodeCoordinateStore.subscribe(value => { nodeCoordinate = value; })
 
 let selectedScaleLevel = undefined;
-selectedScaleLevelStore.subscribe( value => {selectedScaleLevel = value;} )
+selectedScaleLevelStore.subscribe(value => { selectedScaleLevel = value; })
 
 let cnnLayerRanges = undefined;
-cnnLayerRangesStore.subscribe( value => {cnnLayerRanges = value;} )
+cnnLayerRangesStore.subscribe(value => { cnnLayerRanges = value; })
 
 let cnnLayerMinMax = undefined;
-cnnLayerMinMaxStore.subscribe( value => {cnnLayerMinMax = value;} )
+cnnLayerMinMaxStore.subscribe(value => { cnnLayerMinMax = value; })
 
 let detailedMode = undefined;
-detailedModeStore.subscribe( value => {detailedMode = value;} )
+detailedModeStore.subscribe(value => { detailedMode = value; })
 
 /**
  * Use bounded d3 data to draw one canvas
@@ -79,12 +79,12 @@ export const drawOutput = (d, i, g, range) => {
   if (imageLength === 1) {
     imageSingleArray[0] = d.output;
   } else {
-    for (let i = 0; i < imageSingleArray.length; i+=4) {
+    for (let i = 0; i < imageSingleArray.length; i += 4) {
       let pixeIndex = Math.floor(i / 4);
       let row = Math.floor(pixeIndex / imageLength);
       let column = pixeIndex % imageLength;
       let color = undefined;
-      if (d.type === 'input' || d.type === 'fc' ) {
+      if (d.type === 'input' || d.type === 'fc') {
         color = d3.rgb(colorScale(1 - d.output[row][column]))
       } else {
         color = d3.rgb(colorScale((d.output[row][column] + range / 2) / range));
@@ -109,7 +109,7 @@ export const drawOutput = (d, i, g, range) => {
   bufferContext.putImageData(imageSingle, 0, 0);
   largeCanvasContext.drawImage(bufferCanvas, 0, 0, imageLength, imageLength,
     0, 0, nodeLength * 3, nodeLength * 3);
-  
+
   let imageDataURL = largeCanvas.toDataURL();
   d3.select(image).attr('xlink:href', imageDataURL);
 
@@ -149,7 +149,7 @@ export const drawCustomImage = (image, inputLayer) => {
   let imageSingle = bufferContext.getImageData(0, 0, imageLength, imageLength);
   let imageSingleArray = imageSingle.data;
 
-  for (let i = 0; i < imageSingleArray.length; i+=4) {
+  for (let i = 0; i < imageSingleArray.length; i += 4) {
     let pixeIndex = Math.floor(i / 4);
     let row = Math.floor(pixeIndex / imageLength);
     let column = pixeIndex % imageLength;
@@ -176,7 +176,7 @@ export const drawCustomImage = (image, inputLayer) => {
   bufferContext.putImageData(imageSingle, 0, 0);
   largeCanvasContext.drawImage(bufferCanvas, 0, 0, imageLength, imageLength,
     0, 0, imageWidth * 3, imageWidth * 3);
-  
+
   let imageDataURL = largeCanvas.toDataURL();
   // d3.select(image).attr('xlink:href', imageDataURL);
   image.src = imageDataURL;
@@ -223,7 +223,7 @@ const getLegendGradient = (g, colorScale, gradientName, min, max) => {
  */
 const drawLegends = (legends, legendHeight) => {
   // Add local legends
-  for (let i = 0; i < 2; i++){
+  for (let i = 0; i < 2; i++) {
     let start = 1 + i * 5;
     let range1 = cnnLayerRanges.local[start];
     let range2 = cnnLayerRanges.local[start + 2];
@@ -231,7 +231,7 @@ const drawLegends = (legends, legendHeight) => {
     let localLegendScale1 = d3.scaleLinear()
       .range([0, 2 * nodeLength + hSpaceAroundGap - 1.2])
       .domain([-range1 / 2, range1 / 2]);
-    
+
     let localLegendScale2 = d3.scaleLinear()
       .range([0, 3 * nodeLength + 2 * hSpaceAroundGap - 1.2])
       .domain([-range2 / 2, range2 / 2]);
@@ -240,7 +240,7 @@ const drawLegends = (legends, legendHeight) => {
       .scale(localLegendScale1)
       .tickFormat(d3.format('.2f'))
       .tickValues([-range1 / 2, 0, range1 / 2]);
-    
+
     let localLegendAxis2 = d3.axisBottom()
       .scale(localLegendScale2)
       .tickFormat(d3.format('.2f'))
@@ -278,7 +278,7 @@ const drawLegends = (legends, legendHeight) => {
   }
 
   // Add module legends
-  for (let i = 0; i < 2; i++){
+  for (let i = 0; i < 2; i++) {
     let start = 1 + i * 5;
     let range = cnnLayerRanges.module[start];
 
@@ -297,7 +297,7 @@ const drawLegends = (legends, legendHeight) => {
       .attr('id', `module-legend-${i}`)
       .classed('hidden', !detailedMode || selectedScaleLevel !== 'module')
       .attr('transform', `translate(${nodeCoordinate[start][0].x}, ${0})`);
-    
+
     moduleLegend.append('g')
       .attr('transform', `translate(0, ${legendHeight - 3})`)
       .call(moduleLegendAxis)
@@ -342,20 +342,20 @@ const drawLegends = (legends, legendHeight) => {
 
   // Add output legend
   let outputRectScale = d3.scaleLinear()
-        .domain(cnnLayerRanges.output)
-        .range([0, nodeLength - 1.2]);
+    .domain(cnnLayerRanges.output)
+    .range([0, nodeLength - 1.2]);
 
   let outputLegendAxis = d3.axisBottom()
     .scale(outputRectScale)
     .tickFormat(d3.format('.1f'))
     .tickValues([0, cnnLayerRanges.output[1]])
-  
+
   let outputLegend = legends.append('g')
     .attr('class', 'legend output-legend')
     .attr('id', 'output-legend')
     .classed('hidden', !detailedMode)
     .attr('transform', `translate(${nodeCoordinate[11][0].x}, ${0})`);
-  
+
   outputLegend.append('g')
     .attr('transform', `translate(0, ${legendHeight - 3})`)
     .call(outputLegendAxis);
@@ -364,7 +364,7 @@ const drawLegends = (legends, legendHeight) => {
     .attr('width', nodeLength)
     .attr('height', legendHeight)
     .style('fill', 'gray');
-  
+
   // Add input image legend
   let inputScale = d3.scaleLinear()
     .range([0, nodeLength - 1.2])
@@ -379,7 +379,7 @@ const drawLegends = (legends, legendHeight) => {
     .attr('class', 'legend input-legend')
     .classed('hidden', !detailedMode)
     .attr('transform', `translate(${nodeCoordinate[0][0].x}, ${0})`);
-  
+
   inputLegend.append('g')
     .attr('transform', `translate(0, ${legendHeight - 3})`)
     .call(inputLegendAxis);
@@ -388,7 +388,7 @@ const drawLegends = (legends, legendHeight) => {
     .attr('x', 0.3)
     .attr('width', nodeLength - 0.3)
     .attr('height', legendHeight)
-    .attr('transform', `rotate(180, ${nodeLength/2}, ${legendHeight/2})`)
+    .attr('transform', `rotate(180, ${nodeLength / 2}, ${legendHeight / 2})`)
     .style('stroke', 'rgb(20, 20, 20)')
     .style('stroke-width', 0.3)
     .style('fill', 'url(#inputGradient)');
@@ -410,10 +410,10 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
   hSpaceAroundGap = (width - nodeLength * numLayers) / (8 + 5 * gapRatio);
   hSpaceAroundGapStore.set(hSpaceAroundGap);
   let leftAccuumulatedSpace = 0;
-  
+
   // clear nodeCoordinate for reloading, otherwise it will push new coords into 
   //existing array as well as generate blank array
-  nodeCoordinate.length=0;
+  nodeCoordinate.length = 0;
 
   // Iterate through the cnn to draw nodes in each layer
   for (let l = 0; l < cnn.length; l++) {
@@ -459,22 +459,22 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
         // https://bugs.webkit.org/show_bug.cgi?id=23113
         let top = i * nodeLength + (i + 1) * vSpaceAroundGap;
         top += svgPaddings.top;
-        nodeCoordinate[l].push({x: left, y: top});
+        nodeCoordinate[l].push({ x: left, y: top });
         return `layer-${l}-node-${i}`
       });
-    
+
     // Overwrite the mouseover and mouseleave function for output nodes to show
     // hover info in the UI
     layerGroup.selectAll('g.node-output')
       .on('mouseover', (d, i, g) => {
         nodeMouseOverHandler(d, i, g);
-        hoverInfoStore.set( {show: true, text: `Output value: ${formater(d.output)}`} );
+        hoverInfoStore.set({ show: true, text: `Output value: ${formater(d.output)}` });
       })
       .on('mouseleave', (d, i, g) => {
         nodeMouseLeaveHandler(d, i, g);
-        hoverInfoStore.set( {show: false, text: `Output value: ${formater(d.output)}`} );
+        hoverInfoStore.set({ show: false, text: `Output value: ${formater(d.output)}` });
       });
-    
+
     if (curLayer[0].layerName !== 'output') {
       // Embed raster image in these groups
       nodeGroups.append('image')
@@ -483,7 +483,7 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
         .attr('height', nodeLength)
         .attr('x', left)
         .attr('y', (d, i) => nodeCoordinate[l][i].y);
-      
+
       // Add a rectangle to show the border
       nodeGroups.append('rect')
         .attr('class', 'bounding')
@@ -512,7 +512,7 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
         .style('fill', 'black')
         .style('opacity', 0.5)
         .text((d, i) => classLists[i]);
-      
+
       // Add annotation text to tell readers the exact output probability
       // nodeGroups.append('text')
       //   .attr('class', 'annotation-text')
@@ -530,8 +530,8 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
   // Compute the scale of the output score width (mapping the the node
   // width to the max output score)
   let outputRectScale = d3.scaleLinear()
-        .domain(cnnLayerRanges.output)
-        .range([0, nodeLength]);
+    .domain(cnnLayerRanges.output)
+    .range([0, nodeLength]);
 
   // Draw the canvas
   for (let l = 0; l < cnn.length; l++) {
@@ -561,8 +561,8 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
   });
 
   let svgHeight = Number(d3.select('#cnn-svg').style('height').replace('px', '')) + 150;
-  let scroll = new SmoothScroll('a[href*="#"]', {offset: -svgHeight});
-  
+  let scroll = new SmoothScroll('a[href*="#"]', { offset: -svgHeight });
+
   let detailedLabels = svg.selectAll('g.layer-detailed-label')
     .data(layerNames)
     .enter()
@@ -580,17 +580,17 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
       let target = '';
       if (d.name.includes('conv')) { target = 'convolution' }
       if (d.name.includes('relu')) { target = 'relu' }
-      if (d.name.includes('max_pool')) { target = 'pooling'}
-      if (d.name.includes('input')) { target = 'input'}
+      if (d.name.includes('max_pool')) { target = 'pooling' }
+      if (d.name.includes('input')) { target = 'input' }
 
       // Scroll to a article element
       let anchor = document.querySelector(`#article-${target}`);
       scroll.animateScroll(anchor);
     });
-  
+
   detailedLabels.append('title')
     .text('Move to article section');
-    
+
   detailedLabels.append('text')
     .style('opacity', 0.7)
     .style('dominant-baseline', 'middle')
@@ -603,7 +603,7 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
     .attr('x', 0)
     .attr('dy', '1.5em')
     .text(d => d.dimension);
-  
+
   let labels = svg.selectAll('g.layer-label')
     .data(layerNames)
     .enter()
@@ -621,24 +621,24 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
       let target = '';
       if (d.name.includes('conv')) { target = 'convolution' }
       if (d.name.includes('relu')) { target = 'relu' }
-      if (d.name.includes('max_pool')) { target = 'pooling'}
-      if (d.name.includes('input')) { target = 'input'}
+      if (d.name.includes('max_pool')) { target = 'pooling' }
+      if (d.name.includes('input')) { target = 'input' }
 
       // Scroll to a article element
       let anchor = document.querySelector(`#article-${target}`);
       scroll.animateScroll(anchor);
     });
-  
+
   labels.append('title')
     .text('Move to article section');
-  
+
   labels.append('text')
     .style('dominant-baseline', 'middle')
     .style('opacity', 0.8)
     .text(d => {
       if (d.name.includes('conv')) { return 'conv' }
       if (d.name.includes('relu')) { return 'relu' }
-      if (d.name.includes('max_pool')) { return 'max_pool'}
+      if (d.name.includes('max_pool')) { return 'max_pool' }
       return d.name
     });
 
@@ -648,33 +648,32 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
 
   let legendHeight = 5;
   let legends = svg.append('g')
-      .attr('class', 'color-legend')
-      .attr('transform', `translate(${0}, ${
-        svgPaddings.top + vSpaceAroundGap * (10) + vSpaceAroundGap +
-        nodeLength * 10
+    .attr('class', 'color-legend')
+    .attr('transform', `translate(${0}, ${svgPaddings.top + vSpaceAroundGap * (10) + vSpaceAroundGap +
+      nodeLength * 10
       })`);
-  
+
   drawLegends(legends, legendHeight);
 
   // Add edges between nodes
   let linkGen = d3.linkHorizontal()
     .x(d => d.x)
     .y(d => d.y);
-  
+
   let linkData = getLinkData(nodeCoordinate, cnn);
 
   let edgeGroup = cnnGroup.append('g')
     .attr('class', 'edge-group');
-  
+
   edgeGroup.selectAll('path.edge')
     .data(linkData)
     .enter()
     .append('path')
     .attr('class', d =>
       `edge edge-${d.targetLayerIndex} edge-${d.targetLayerIndex}-${d.targetNodeIndex}`)
-    .attr('id', d => 
+    .attr('id', d =>
       `edge-${d.targetLayerIndex}-${d.targetNodeIndex}-${d.sourceNodeIndex}`)
-    .attr('d', d => linkGen({source: d.source, target: d.target}))
+    .attr('d', d => linkGen({ source: d.source, target: d.target }))
     .style('fill', 'none')
     .style('stroke-width', edgeStrokeWidth)
     .style('opacity', edgeOpacity)
@@ -690,12 +689,12 @@ export const drawCNN = (width, height, cnnGroup, nodeMouseOverHandler,
     .attr('class', 'annotation-text')
     .style('dominant-baseline', 'hanging')
     .style('text-anchor', 'middle');
-  
+
   redChannel.append('tspan')
     .style('dominant-baseline', 'hanging')
     .style('fill', '#C95E67')
     .text('Red');
-  
+
   redChannel.append('tspan')
     .style('dominant-baseline', 'hanging')
     .text(' channel');
@@ -726,8 +725,8 @@ export const updateCNN = () => {
   // Compute the scale of the output score width (mapping the the node
   // width to the max output score)
   let outputRectScale = d3.scaleLinear()
-      .domain(cnnLayerRanges.output)
-      .range([0, nodeLength]);
+    .domain(cnnLayerRanges.output)
+    .range([0, nodeLength]);
 
   // Rebind the cnn data to layer groups layer by layer
   for (let l = 0; l < cnn.length; l++) {
@@ -744,7 +743,7 @@ export const updateCNN = () => {
         .duration(300)
         .ease(d3.easeCubicOut)
         .style('opacity', 0)
-        .on('end', function() {
+        .on('end', function () {
           d3.select(this)
             .select('image.node-image')
             .each((d, i, g) => drawOutput(d, i, g, range));
@@ -762,7 +761,7 @@ export const updateCNN = () => {
 
   // Update the color scale legend
   // Local legends
-  for (let i = 0; i < 2; i++){
+  for (let i = 0; i < 2; i++) {
     let start = 1 + i * 5;
     let range1 = cnnLayerRanges.local[start];
     let range2 = cnnLayerRanges.local[start + 2];
@@ -770,7 +769,7 @@ export const updateCNN = () => {
     let localLegendScale1 = d3.scaleLinear()
       .range([0, 2 * nodeLength + hSpaceAroundGap])
       .domain([-range1, range1]);
-    
+
     let localLegendScale2 = d3.scaleLinear()
       .range([0, 3 * nodeLength + 2 * hSpaceAroundGap])
       .domain([-range2, range2]);
@@ -779,18 +778,18 @@ export const updateCNN = () => {
       .scale(localLegendScale1)
       .tickFormat(d3.format('.2f'))
       .tickValues([-range1, 0, range1]);
-    
+
     let localLegendAxis2 = d3.axisBottom()
       .scale(localLegendScale2)
       .tickFormat(d3.format('.2f'))
       .tickValues([-range2, 0, range2]);
-    
+
     svg.select(`g#local-legend-${i}-1`).select('g').call(localLegendAxis1);
     svg.select(`g#local-legend-${i}-2`).select('g').call(localLegendAxis2);
   }
 
   // Module legend
-  for (let i = 0; i < 2; i++){
+  for (let i = 0; i < 2; i++) {
     let start = 1 + i * 5;
     let range = cnnLayerRanges.local[start];
 
@@ -802,8 +801,8 @@ export const updateCNN = () => {
     let moduleLegendAxis = d3.axisBottom()
       .scale(moduleLegendScale)
       .tickFormat(d3.format('.2f'))
-      .tickValues([-range, -(range / 2), 0, range/2, range]);
-    
+      .tickValues([-range, -(range / 2), 0, range / 2, range]);
+
     svg.select(`g#module-legend-${i}`).select('g').call(moduleLegendAxis);
   }
 
@@ -819,7 +818,7 @@ export const updateCNN = () => {
   let globalLegendAxis = d3.axisBottom()
     .scale(globalLegendScale)
     .tickFormat(d3.format('.2f'))
-    .tickValues([-range, -(range / 2), 0, range/2, range]);
+    .tickValues([-range, -(range / 2), 0, range / 2, range]);
 
   svg.select(`g#global-legend`).select('g').call(globalLegendAxis);
 
@@ -828,7 +827,7 @@ export const updateCNN = () => {
     .scale(outputRectScale)
     .tickFormat(d3.format('.1f'))
     .tickValues([0, cnnLayerRanges.output[1]]);
-  
+
   svg.select('g#output-legend').select('g').call(outputLegendAxis);
 }
 
@@ -852,24 +851,24 @@ export const updateCNNLayerRanges = () => {
     let aggregatedExtent = outputExtents.reduce((acc, cur) => {
       return [Math.min(acc[0], cur[0]), Math.max(acc[1], cur[1])];
     })
-    cnnLayerMinMax.push({min: aggregatedExtent[0], max: aggregatedExtent[1]});
+    cnnLayerMinMax.push({ min: aggregatedExtent[0], max: aggregatedExtent[1] });
 
     // conv layer refreshes curRange counting
     if (curLayer[0].type === 'conv' || curLayer[0].type === 'fc') {
       aggregatedExtent = aggregatedExtent.map(Math.abs);
       // Plus 0.1 to offset the rounding error (avoid black color)
-      curRange = 2 * (0.1 + 
+      curRange = 2 * (0.1 +
         Math.round(Math.max(...aggregatedExtent) * 1000) / 1000);
     }
 
-    if (curRange !== undefined){
+    if (curRange !== undefined) {
       cnnLayerRangesLocal.push(curRange);
     }
   }
 
   // Finally, add the output layer range
   cnnLayerRangesLocal.push(1);
-  cnnLayerMinMax.push({min: 0, max: 1});
+  cnnLayerMinMax.push({ min: 0, max: 1 });
 
   // Support different levels of scales (1) lcoal, (2) component, (3) global
   let cnnLayerRangesComponent = [1];

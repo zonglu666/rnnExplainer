@@ -53,7 +53,7 @@ const constructNNFromJSON = (nnJSON, inputImageArray) => {
     let node = new Node('input', i, nodeType.INPUT, 0, inputImageArray[i]);
     inputLayer.push(node);
   }
-                                                                                                                   
+
   nn.push(inputLayer);
   let curLayerIndex = 1;
 
@@ -181,12 +181,12 @@ const matrixDot = (mat1, mat2) => {
   console.assert(mat1[0].length === mat2[0].length, 'Dimension not matching');
 
   let result = 0;
-  for (let i = 0; i < mat1.length; i++){
-    for (let j = 0; j < mat1[0].length; j++){
+  for (let i = 0; i < mat1.length; i++) {
+    for (let j = 0; j < mat1[0].length; j++) {
       result += mat1[i][j] * mat2[i][j];
     }
   }
-  
+
   return result;
 }
 
@@ -249,15 +249,15 @@ const imageDataTo3DArray = (imageData) => {
 
   // Create array placeholder for each channel
   let imageArray = [init2DArray(width, width, 0), init2DArray(width, width, 0),
-    init2DArray(width, width, 0)];
-  
+  init2DArray(width, width, 0)];
+
   // Iterate through the data to fill out channel arrays above
   for (let i = 0; i < imageData.length; i++) {
     let pixelIndex = Math.floor(i / 4),
       channelIndex = i % 4,
       row = Math.floor(pixelIndex / width),
       column = pixelIndex % width;
-    
+
     if (channelIndex < 3) {
       imageArray[channelIndex][row][column] = imageData[i];
     }
@@ -303,12 +303,12 @@ const getInputImageArray = (imgFile) => {
  * @param {int} stride Stride size
  * @param {int} padding Padding size
  */
-export const singleConv = (input, kernel, stride=1, padding=0) => {
+export const singleConv = (input, kernel, stride = 1, padding = 0) => {
   // TODO: implement padding
 
   // Only support square input and kernel
   console.assert(input.length === input[0].length,
-     'Conv input is not square');
+    'Conv input is not square');
   console.assert(kernel.length === kernel[0].length,
     'Conv kernel is not square');
 
@@ -402,7 +402,7 @@ const relu = (curLayer) => {
  * @param {string} padding Pading method when encountering odd number mat,
  * currently this function only supports 'VALID'
  */
-export const singleMaxPooling = (mat, kernelWidth=2, stride=2, padding='VALID') => {
+export const singleMaxPooling = (mat, kernelWidth = 2, stride = 2, padding = 'VALID') => {
   console.assert(kernelWidth === 2, 'Only supports kernen = [2,2]');
   console.assert(stride === 2, 'Only supports stride = 2');
   console.assert(padding === 'VALID', 'Only support valid padding');
@@ -423,8 +423,8 @@ export const singleMaxPooling = (mat, kernelWidth=2, stride=2, padding='VALID') 
         c * stride, c * stride + kernelWidth);
       result[r][c] = matrixMax(curWindow);
     }
- }
- return result;
+  }
+  return result;
 }
 
 /**

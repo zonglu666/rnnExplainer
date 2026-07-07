@@ -1,7 +1,7 @@
 /* global tf */
 
-import {OOV_INDEX, padSequences} from '../../imdb/sequence_utils';
-import {Node, Link} from './class';
+import { OOV_INDEX, padSequences } from '../../imdb/sequence_utils';
+import { Node, Link } from './class';
 
 // Enum of node types
 const nodeType = {
@@ -16,13 +16,13 @@ const nodeType = {
   DENSE: 'dense',
 };
 
-export class SentimentPredictor{
+export class SentimentPredictor {
   /**
    * 
    * @param {string} urls 
    */
   async init(urls) {
-    this.urls= urls;
+    this.urls = urls;
     this.model = await loadTrainedModel_rnn(urls.model);
     this.metadata = await this.loadMetadata(urls.metadata);
 
@@ -39,44 +39,44 @@ export class SentimentPredictor{
     try {
       const metadataJson = await fetch(url);
       const metadata = await metadataJson.json();
-      console.log('Done loading metadata from '+url);
+      console.log('Done loading metadata from ' + url);
 
       this.indexFrom = metadata['index_from'];
       this.maxLen = metadata['max_len'];
       this.wordIndex = metadata['word_index'];
       this.vocabularySize = metadata['vocabulary_size'];
-      console.log('indexFrom = ' , this.indexFrom);
-      console.log('maxLen = ' , this.maxLen);
+      console.log('indexFrom = ', this.indexFrom);
+      console.log('maxLen = ', this.maxLen);
       // console.log('wordIndex = ' , this.wordIndex);
       console.log('vocabularySize = ', this.vocabularySize);
 
       return metadata;
-    } catch(err) {
+    } catch (err) {
       console.error(err);
       console.log('Loading metadata failed.');
     }
   }
 
-  getInputTextTensor () {
+  getInputTextTensor() {
     // Convert the words to a sequence of word indices.
     try {
       let sequence = this.inputArray.map(word => {
-          let this_wordIndex = this.wordIndex[word] + this.indexFrom;
-          // the issue: 'OOV' to NaN has been solved: 'OOV' and 
-          // other words outside the dictionary to 2 now
-          if (!this_wordIndex || this_wordIndex > this.vocabularySize) {
-            this_wordIndex = OOV_INDEX;
-          }
-          return this_wordIndex;
+        let this_wordIndex = this.wordIndex[word] + this.indexFrom;
+        // the issue: 'OOV' to NaN has been solved: 'OOV' and 
+        // other words outside the dictionary to 2 now
+        if (!this_wordIndex || this_wordIndex > this.vocabularySize) {
+          this_wordIndex = OOV_INDEX;
+        }
+        return this_wordIndex;
       });
-    
+
       // Perform truncation and padding.
       this.paddedSequence = padSequences([sequence], this.maxLen);
       // console.log('paddedSequence is: ', this.paddedSequence);
       let tensor = tf.tensor2d(this.paddedSequence, [1, this.maxLen]);
-    
+
       return tensor
-    } catch(err) {
+    } catch (err) {
       console.error(err);
       console.log('Get Input Text Tensor failed.');
     }
@@ -88,17 +88,17 @@ export class SentimentPredictor{
  * @param {Tensor} input Loaded input text tensor.
  * @param {Model} model Loaded tf.js model.
  */
-  predictResult(inputMovieReview, model=this.model) {
+  predictResult(inputMovieReview, model = this.model) {
     console.log("-----------------predict directly and print the result-----------------")
     let ipArray = getInputTextArray(inputMovieReview);
-    if(!this.inputArray){
+    if (!this.inputArray) {
       this.inputArray = ipArray;
-    } else if (this.inputArray !== ipArray){
+    } else if (this.inputArray !== ipArray) {
       this.inputArray = ipArray;
     }
 
     let ipTensor = this.getInputTextTensor();
-    if(!this.inputTensor){
+    if (!this.inputTensor) {
       this.inputTensor = ipTensor;
     } else if (this.inputTensor !== ipTensor) {
       this.inputTensor = ipTensor;
@@ -112,26 +112,28 @@ export class SentimentPredictor{
     predictOut.dispose();
     let endMs = performance.now();
 
-    return {score: score, elapsed: (endMs - beginMs), 
+    return {
+      score: score, elapsed: (endMs - beginMs),
       inputReviewArray: this.inputArray,
-      inputReviewTensor: this.inputTensor};
+      inputReviewTensor: this.inputTensor
+    };
   }
 
-  async constructNN(inputMovieReview, model= this.model) {
+  async constructNN(inputMovieReview, model = this.model) {
     console.log("-----------------predict layer by layer and generate NN structure-----------------")
     // console.log('input review is: ', inputMovieReview)
 
     // Get the array and tensor if do not execure predictOut before
     let ipArray = await getInputTextArray(inputMovieReview);
-    if(!this.inputArray){
+    if (!this.inputArray) {
       this.inputArray = ipArray;
-    } else if (this.inputArray !== ipArray){
+    } else if (this.inputArray !== ipArray) {
       this.inputArray = ipArray;
     }
     // console.log('input text array is: ', this.inputArray);
 
     let ipTensor = await this.getInputTextTensor();
-    if(!this.inputTensor){
+    if (!this.inputTensor) {
       this.inputTensor = ipTensor;
     } else if (this.inputTensor !== ipTensor) {
       this.inputTensor = ipTensor;
@@ -140,10 +142,10 @@ export class SentimentPredictor{
     // let inputTensorBatch = tf.stack([inputTensor]);
     console.log(this.inputTensor);
 
-    let preTensor = this.inputTensor; 
+    let preTensor = this.inputTensor;
     let outputs = [];
 
-    for (let l = 0; l< model.layers.length; l++) {
+    for (let l = 0; l < model.layers.length; l++) {
       console.log('current layer name is: ', model.layers[l].name);
       let curTensor = model.layers[l].apply(preTensor);
       // console.log(curTensor);
@@ -163,7 +165,7 @@ export class SentimentPredictor{
 
       preTensor = curTensor;
     }
-    console.log('final rnn outputs is ' )
+    console.log('final rnn outputs is ')
     console.log(outputs);
     console.log('rnn result is ' + outputs[2])
 
@@ -181,8 +183,8 @@ export class SentimentPredictor{
 const getInputTextArray = (inputReview) => {
   // Convert to lower case and remove all punctuations and more spaces.
   return inputReview.trim().toLowerCase()
-      .replace(/(\.|\,|\!|\?|\\|\/|\-|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\_|\=|\<|\>|\:|\;)/g, ' ')
-      .replace(/\s+/g, ' ').trim().split(' ');
+    .replace(/(\.|\,|\!|\?|\\|\/|\-|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\_|\=|\<|\>|\:|\;)/g, ' ')
+    .replace(/\s+/g, ' ').trim().split(' ');
 }
 
 /**
@@ -202,7 +204,7 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
   let lstmAtEnd = [];
   let lstmLayerOnTime = [];
   let inputShape = model.layers[0].batchInputShape.slice(1);
-  let inputTextArray = inputTextTensor.transpose([1,0]).arraySync();
+  let inputTextArray = inputTextTensor.transpose([1, 0]).arraySync();
 
   // First layer's 100 nodes' outputs are the words of inputImageArray?
   for (let i = 0; i < inputShape[0]; i++) {
@@ -212,7 +214,7 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
       nonPadInputLayer.push(node);
     }
   }
-                                                                                                                   
+
   rnn.push(inputLayer);
   let curLayerIndex = 1;
 
@@ -229,9 +231,9 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
 
     let curLayerNodes = [];
     let curLayerType;
-    
+
     // Identify layer type based on the layer name
-    
+
     if (layer.name.includes('conv')) {
       curLayerType = nodeType.CONV;
     } else if (layer.name.includes('pool')) {
@@ -346,17 +348,17 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
             // row -> column -> channel
             curNodeRealIndex = preNodeIndex * (preNodeWidth * preNodeWidth) +
               preNodeRow * preNodeWidth + preNodeCol;
-          
+
           let node = new Node(layer.name, i, curLayerType,
-              bias, outputs[i]);
-          
+            bias, outputs[i]);
+
           // TF uses the (i) index for computation, but the real order should
           // be (curNodeRealIndex). We will sort the nodes using the real order
           // after we compute the logits in the output layer.
           node.realIndex = curNodeRealIndex;
 
           let link = new Link(rnn[curLayerIndex - 1][preNodeIndex],
-              node, [preNodeRow, preNodeCol]);
+            node, [preNodeRow, preNodeCol]);
 
           rnn[curLayerIndex - 1][preNodeIndex].outputLinks.push(link);
           node.inputLinks.push(link);
@@ -372,21 +374,21 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
         let bias = 0;
         // [10000,64]
         let weights = layer.embeddings.val.arraySync();
-       
+
         // // The new order is [output_dim, input_dim]
         // let weights = layer.embeddings.val.transpose([1,0]).arraySync();
 
-        for (let i=0; i<outputs.length; i++) {
-          let node = new Node(layer.name, i, curLayerType, 
+        for (let i = 0; i < outputs.length; i++) {
+          let node = new Node(layer.name, i, curLayerType,
             bias, outputs[i]);
           // Embedding layer have weights according to the word token (input Node[i].output)
-          let preNode = rnn[curLayerIndex-1][i];
+          let preNode = rnn[curLayerIndex - 1][i];
           // same as node.output
-          let curLink = new Link(preNode,node, weights[preNode.output]);
+          let curLink = new Link(preNode, node, weights[preNode.output]);
           preNode.outputLinks.push(curLink);
           node.inputLinks.push(curLink);
 
-          
+
           // // One-to-one links
           // for (let j = 0; j < rnn[curLayerIndex -1].length; j++){
           //   let preNode = rnn[curLayerIndex -1][j];
@@ -395,7 +397,7 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
           //   preNode.outputLinks.push(curLink);
           //   node.inputLinks.push(curLink);
           // }
-          
+
           curLayerNodes.push(node);
         }
 
@@ -453,12 +455,12 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
         // [64, 128] => [128,64]
         let kernelWeights = layer.cell.kernel.val.transpose([1, 0]).arraySync();
         // [32, 128] => [128.32]
-        let recurrent_kernel_weights = layer.cell.recurrentKernel.val.transpose([1,0]).arraySync();
+        let recurrent_kernel_weights = layer.cell.recurrentKernel.val.transpose([1, 0]).arraySync();
         // There is only one node here and the output is just for the last time step, 
         // so we cannot use outputs for nodes at different time step directly.
         let node = new Node(layer.name, 0, curLayerType, bias, outputs);
-        for (let j=0; j<rnn[curLayerIndex-1].length; j++) {
-          let preNode =rnn[curLayerIndex-1][j];
+        for (let j = 0; j < rnn[curLayerIndex - 1].length; j++) {
+          let preNode = rnn[curLayerIndex - 1][j];
           // according to code review: 
           // h_tm1 = states[0]  # previous memory state
           // c_tm1 = states[1]  # previous carry state
@@ -487,11 +489,11 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
         curLayerNodes.push(node);
 
         // add output of lstm at the final time step to array
-        for (let i =0; i < outputs.length; i++){
+        for (let i = 0; i < outputs.length; i++) {
           let finalOutput = new Node(layer.name, i, curLayerType, 0, outputs[i]);
           lstmAtEnd.push(finalOutput);
         }
-        
+
         //add the first node on time steps into a special layer
         let ct, outputOnTime;
         let nodeOnTime = new Node(layer.name, 0, curLayerType, kernelBiases, outputOnTime)
@@ -500,13 +502,13 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
         nodeOnTime.inputLinks.push(curLink);
         lstmLayerOnTime.push(nodeOnTime);
         // the left time steps
-        for (let i=1; i < rnn[curLayerIndex-1].length; i++){
-          nodeOnTime = new Node(layer.name, i, curLayerType, 
+        for (let i = 1; i < rnn[curLayerIndex - 1].length; i++) {
+          nodeOnTime = new Node(layer.name, i, curLayerType,
             kernelBiases, outputOnTime);
-          preNode = rnn[curLayerIndex-1][i];
+          preNode = rnn[curLayerIndex - 1][i];
 
-          let nodeOnTM1 = lstmLayerOnTime[i-1];
-          let preLink = new Link (nodeOnTM1, nodeOnTime, kernelWeights)
+          let nodeOnTM1 = lstmLayerOnTime[i - 1];
+          let preLink = new Link(nodeOnTM1, nodeOnTime, kernelWeights)
           nodeOnTime.inputLinks.push(preLink);
           nodeOnTM1.outputLinks.push(preLink);
 
@@ -527,13 +529,13 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
       }
       case nodeType.DENSE: {
         let biases = layer.bias.val.arraySync();
-        let weights = layer.kernel.val.transpose([1,0]).arraySync();
+        let weights = layer.kernel.val.transpose([1, 0]).arraySync();
 
         // add nodes into this layer
-        for (let i =0; i < outputs.length; i++) {
+        for (let i = 0; i < outputs.length; i++) {
           let node = new Node(layer.name, i, curLayerType,
             biases[i], outputs[i]);
-          
+
           // only the output of LSTM at the last time step exists
           // Since we are visualizing the logit values, we need to track
           // the raw value before ...
@@ -544,30 +546,30 @@ const constructRNNFromOutputs = (allOutputs, model, inputTextTensor) => {
 
             preNode.outputLinks.push(curLink);
             node.inputLinks.push(curLink);
-            for (let k = 0; k<preNode.output.length; k++)
-            curLogit += preNode.output[k] * weights[j][k];              
-            }
+            for (let k = 0; k < preNode.output.length; k++)
+              curLogit += preNode.output[k] * weights[j][k];
+          }
           curLogit += biases[i];
           node.logit = curLogit;
           curLayerNodes.push(node);
 
           // add outputlink to the last node of lstmLayerOnTime
-          if( lstmLayerOnTime && lstmLayerOnTime.length > 0){
-            let preNodeOnTime = lstmLayerOnTime[lstmLayerOnTime.length-1]
-            let link = new Link(preNodeOnTime,node, weights[i]);
+          if (lstmLayerOnTime && lstmLayerOnTime.length > 0) {
+            let preNodeOnTime = lstmLayerOnTime[lstmLayerOnTime.length - 1]
+            let link = new Link(preNodeOnTime, node, weights[i]);
             preNodeOnTime.outputLinks.push(link);
           }
 
           // add outputlink to the final outputs of lstm at the last time step
 
-          for (let j = 0; j<lstmAtEnd.length;j++){
+          for (let j = 0; j < lstmAtEnd.length; j++) {
             let preOutput = lstmAtEnd[j];
             let link = new Link(preOutput, node, weights[i][j]);
 
             preOutput.outputLinks.push(link);
           }
 
-        }    
+        }
 
         // Sort layer based on the node TF index
         rnn[curLayerIndex - 1].sort((a, b) => a.realIndex - b.realIndex);
