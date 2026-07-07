@@ -1,6 +1,10 @@
+# Environment
+
+Node.JS v12.16.3
+
 # RNN Explainer
 
-An interactive visualization application designed to help non-experts learn about Recurrent Neural Networks (RNNs). 
+An interactive visualization application designed to help non-experts learn about Recurrent Neural Networks (RNNs).
 
 <a href="https://damien0x0023.github.io/rnnExplainer/" target="_blank"><img src="https://imgur.com/mB6Sg8L.png" style="max-width:100%;"></a>
 
@@ -24,9 +28,11 @@ degit damien0x0023/rnnExplainer
 Install the dependencies:
 
 ```
-npm install 
+npm install
 ```
+
 or
+
 ```
 yarn
 ```
@@ -36,7 +42,9 @@ Then run RNN Explainer:
 ```
 npm run dev
 ```
+
 or
+
 ```
 yarn dev
 ```
@@ -53,11 +61,10 @@ This version is modified from CNN Explainer by Poloclub. CNN Explainer was creat
 Wang, Zijie J., Robert Turko, Omar Shaikh, Haekyu Park, Nilaksh Das, Fred Hohman, Minsuk Kahng, and Duen Horng Chau.
 arXiv preprint 2020. arXiv:2004.15004.
 
-
 ## License
+
 The software is available under the [MIT License](https://github.com/damien0x0023/rnnExplainer/blob/master/LICENSE).
 
 ## Contact
-I am full of ears if you have any questions, comments or suggestions. Feel free to open an [issue](https://github.com/damien0x0023/rnnExplainer/issues/new/choose)  or [contac me](jyh91517@gmail.com).
 
-
+I am full of ears if you have any questions, comments or suggestions. Feel free to open an [issue](https://github.com/damien0x0023/rnnExplainer/issues/new/choose) or [contac me](jyh91517@gmail.com).

@@ -31,7 +31,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --single --host 0.0.0.0",
-    "start:dev": "sirv public --single --dev --host 0.0.0.0",
+    "start:dev": "sirv public --single --dev --port 61535",
     "train": "babel-node imdb/train.js"
   }
 }

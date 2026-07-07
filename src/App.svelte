@@ -5,11 +5,11 @@
 
 	const NNlist= [{ 
 			id: 1, 
-			name: `Convolutional Neural Network`, 
+			name: `卷积神经网络 Convolutional Neural Network`, 
 			alis: `CNN`,
 		},{ 
 			id: 2, 
-			name: `Recurrent Neural Network`, 
+			name: `循环神经网络 Recurrent Neural Network`, 
 			alis: `RNN`,
 		}
 	];

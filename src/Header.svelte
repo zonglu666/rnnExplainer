@@ -106,7 +106,7 @@
 		/* display: flex; */
 		/* justify-content: flex-start; */
 		/* align-items: center; */
-	    display: flex;
+	  display: flex;
 		position: relative;
 		flex-direction: column;
 		justify-content: space-between;
@@ -118,7 +118,7 @@
 <div id="header">
 	<div id="logo">
 		<div id="logo-text">
-			{selectedNN.alis} Explainer
+			{selectedNN.alis} 可视化演示
     	</div>
 
 		<svg class="logo-svg">
@@ -135,7 +135,7 @@
 
 			<g class="svg-logo" filter="url(#chalk-texture)" >				
 				<text id="svg-logo-tagline" x=20% y=80%>
-					Learn {selectedNN.name} ({selectedNN.alis}) in your browser!
+					{selectedNN.name} ({selectedNN.alis}) 
 				</text>
 			</g>
 		</svg>

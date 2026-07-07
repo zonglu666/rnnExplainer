@@ -164,7 +164,7 @@
     3: {local: 'output-legend', module: 'output-legend', global: 'output-legend'}
   }
 
-  const defaultInputContent = 'Please input your review within 100 words.';
+  const defaultInputContent = '请输入你的评论（100字以内）';
   const exampleReviews = {
     'input': defaultInputContent,
     'empty': 'Helpless Waiting... The text here is for testing as rendering 100 words representation will cost much time I will seek to improve the response speed later',
@@ -173,7 +173,7 @@
     'negative':
       `the mother in this movie is reckless with her children to the point of neglect i wish i wasn\'t so angry about her and her actions because i would have otherwise enjoyed the flick what a number she was take my advise and fast forward through everything you see her do until the end also is anyone else getting sick of watching movies that are filmed so dark anymore one can hardly see what is being filmed as an audience we are impossibly involved with the actions on the screen so then why the hell can\'t we have night vision`
   };
-  let selectedReview = 'negative';
+  let selectedReview = 'positive';
   let reviewContent;
   let previousSelectedReview = selectedReview;
   let predictor;
@@ -1488,10 +1488,9 @@
               id="example-select" 
               class="form-control" 
               on:change= "{disableControl ? '' : reviewOptionClicked}">
-              <!-- <option value="empty"> Please choose one example</option> -->
-              <option value="positive">Positive example</option>
-              <option value="negative">Negative example</option>
-              <option value="input">Input your review</option>
+              <option value="positive">积极文本 (Positive Example)</option>
+              <option value="negative">消极文本 (Negative Example)</option>
+              <option value="input">自定义文本 (Input Your Review)</option>
             </select>
           </div>      
       </div>
