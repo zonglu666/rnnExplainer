@@ -27,7 +27,7 @@ export default {
 			}
 		}),
 
-        replace({PUBLIC_URL: production ? '/rnnExplainer' : ''}),
+		replace({ PUBLIC_URL: production ? '/nnExplainer' : '' }),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In

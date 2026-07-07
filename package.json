@@ -32,6 +32,7 @@
     "dev": "rollup -c -w",
     "start": "sirv public --single --host 0.0.0.0",
     "start:dev": "sirv public --single --dev --port 61535",
-    "train": "babel-node imdb/train.js"
+    "train": "babel-node imdb/train.js",
+    "cp": "sh ./scripts/cp.sh"
   }
 }

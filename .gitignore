@@ -12,3 +12,4 @@ imdb/resources/
 imdb/backup/
 tiny-vgg/localModel/
 .vscode/
+dist
