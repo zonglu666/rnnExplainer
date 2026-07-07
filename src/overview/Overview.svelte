@@ -1503,27 +1503,7 @@
         </div>
       {/each}
 
-      <!-- The plus button -->
-        <div class="image-container"
-          class:inactive={selectedImage !== 'custom'}
-          class:disabled={disableControl}
-          data-imageName={'custom'}
-          on:click={disableControl ? () => {} : customImageClicked}>
-
-          <img class="custom-image"
-            src="PUBLIC_URL/assets/img/plus.svg"
-            alt="plus button"
-            title="Add new input image"
-            data-imageName="custom"/>
-
-          <span class="fa-stack edit-icon"
-            class:hidden={customImageURL === null}>
-            <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-pen fa-stack-1x fa-inverse"></i>
-          </span>
-
-        </div>
-
+      
       <button class="button is-very-small is-link is-light"
         id="hover-label"
         style="opacity:{hoverInfo.show ? 1 : 0}">

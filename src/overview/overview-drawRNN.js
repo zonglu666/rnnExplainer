@@ -463,12 +463,9 @@ const addLabels = () => {
       if (d.name.includes('lstm')) { target = 'lstm' }
 
       // Scroll to a article element
-      let anchor = document.querySelector(`#article-${target}`);
-      scroll.animateScroll(anchor);
+      // let anchor = document.querySelector(`#article-${target}`);
+      // scroll.animateScroll(anchor);
     });
-
-  detailedLabels.append('title')
-    .text('Move to article section');
 
   detailedLabels.append('text')
     .style('opacity', 0.7)
@@ -508,8 +505,8 @@ const addLabels = () => {
       if (d.name.includes('lstm')) { target = 'lstm' }
 
       // Scroll to a article element
-      let anchor = document.querySelector(`#article-${target}`);
-      scroll.animateScroll(anchor);
+      // let anchor = document.querySelector(`#article-${target}`);
+      // scroll.animateScroll(anchor);
     });
 
   labels.append('title')
